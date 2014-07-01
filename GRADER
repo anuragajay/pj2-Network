@@ -1,0 +1,478 @@
+                                     GRADER
+
+TEAM NAME: HARBRINGERS OF DEATH
+Name of student running submit: Anurag Ajay
+Login of student running submit:cs61b-afa
+
+Second team member's name: Shaurya Kalsi
+Second team member's login:cs61b-mi
+
+Third team member's name (if any): Bharath Satheesh
+Third team member's login:cs61b-ib
+
+IMPORTANT:  Once you've submitted Project 2 once, the same team member should
+submit always.  If a different teammate must submit, inform cs61b@cory.eecs of
+all the details.  Include a complete list of team members, and let us know
+which submission you want graded.
+
+If you've submitted your project once, or even written a substantial amount of
+code together, you may not change partners without the permission of the
+instructor.
+===============================================================================
+Does your program compile without errors?
+Yes
+
+Have you tested your program on the 61B lab machines?
+Yes
+
+Did you successfully implement game tree search?  Did you successfully
+implement alpha-beta pruning?  Are there any limitations on it?  What is the
+default number of search levels set by the one-parameter MachinePlayer
+constructor (or is it a variable-depth search)?
+Yes
+
+Describe your board evaluation function in some detail.
+   *  1)Makes sure that you don’t crowd around either of your goals, since
+   *    the opponent chips cannot even be placed in those.
+   *  2)Works on giving almost double the score based on the number of 
+   *    connections that a particular chip could add.
+   * Also uses a helper method that checks if the movement is in the right 
+   *  direction.
+
+Does your MachinePlayer use any special method of choosing the first few moves?
+No
+
+Is there anything else the graders should know to help them read your project?
+No
+
+
+Describe the classes, modules, and interfaces you designed before and while you
+implemented the project.  Your description should include:
+  -  A list of the classes your program uses.
+  -  A list of each of the "modules" used in or by MachinePlayer, similar to
+     the list in the "Teamwork" section of the README (but hopefully more
+     detailed).  (If you're using a list class, that should probably count as
+     a separate module.)
+  -  For each module, list the class(es) the Module is implemented in.
+  -  For each module, say which of your team members implemented it.
+  -  For each module, describe its interface--specifically, the prototype and
+     behavior of each method that is available for external callers (outside
+     the module) to call.  Don't include methods that are only meant to be
+     called from within the module.
+
+     For each method, provide (1) a method prototype and (2) a complete,
+     unambiguous description of the behavior of the method/module.  This
+     description should also appear before the method in your code's comments.
+
+You will probably need to change some of your design decisions as you go; be
+sure to modify this file to reflect these changes before you submit your
+project.  Your design of classes and interfaces will be worth 10% of your
+grade.
+
+Classes:
+--------------------------------------------------------------------------------------------------------------
+Board
+MachinePlayer
+DList
+DListNode
+Strategy
+Move
+Best
+InvalidNodeException
+
+Modules:
+--------------------------------------------------------------------------------------------------------------
+1) BOARD MODULE that created the game board as a grid and tracks the state of the game. Contains functions to ensure valid moves, such as listOfValidMoves and isValidMove.
+
+Implemented by: Anurag Ajay, Shaurya Kalsi
+	-includes Board Class
+
+__Board__
+
+/**
+     * Board() constructs an empty game Board of Dimension 8 X 8. The four corners are initialized to CORNERS which means
+     * that they won't be used during the game. The rest other squares on Board are initialized to EMPTY. As the game will
+     * progress, they get changed to either BLACK or WHITE. The number of Black chips and White chips is initialialized to
+     * 0. These numbers would increase upto 10 as the game progresses.
+     * @return Board object
+     **/
+public Board()
+
+/**
+    * inBoard(int x,int y) returns whether the position(x,y) lies inside the Board.
+    * @param x: x coordinate of the position
+    * @param y: y coordinate of the position
+    * @return True if position(x,y) is inside the Board. Else, it returns False.
+    **/
+    protected boolean inBoard(int x,int y)
+
+/**
+     * numberOfWhiteChips() returns the number of total white chips
+     * @return the total number of white chips
+     **/    
+    public int numberOfWhiteChips()
+
+/**
+     * numberOfBlackChips() returns the number of total black chips
+     * @return the total number of black chips
+     **/
+    public int numberOfBlackChips()
+
+/**
+     * numberOfChips() returns the number of total chips
+     * @return the total number of chips
+     **/
+    public int numberOfChips()
+
+/**
+     * numberOfChips(int color) returns the number of chips for that particular color
+     * @param color: the color of chip whose number we want
+     * @return the number of chips for the color
+     **/
+    public int numberOfChips(int color)
+
+/**
+     * currentBoard() returns a 2D array of DIMENSION 8 X 8 which represents the current state of Board.
+     * It can be helpful in testing
+     * @return the gameBoard field of current Board object.
+     **/
+    protected int[][] currentBoard()
+
+/**
+     * getElement(int x, int y) returns the color of chip at position(x,y). If position has no chip or
+     * is one of corners of the Board or is outside the Board, we get EMPTY as result. 
+     * @param x: x coordinate of position whose content we want
+     * @param y: y coordinate of position whose content we want
+     * @return the color of chip at position(x,y). If no chip present at position(x,y), EMPTY is returned
+     * If (x,y) lies outside the Board, EMPTY is returned
+     **/
+    protected int getElement(int x, int y)
+
+/**
+     * setElement(int x, int y, int color) sets the content at (x,y) to the color, taken as input. 
+     * If color is BLACK/WHITE:
+     *  (1) (x,y) is empty
+     *       The content of (x,y) is set as BLACK/WHITE and number of black/white chips increments by 1
+     *  (2) (x,y) is BLACK/WHITE
+     *       Nothing happens
+     *  (3) (x,y) is WHITE/BLACK
+     *      WHITE/BLACK is replaced by BLACK/WHITE at (x,y). The number of white/black chips decrements
+     *      by 1 and that of black/white increments by 1.      
+     * If color is EMPTY and the earlier content of (x,y) is either black or white, 
+     * the number of black or white chips is decreased by 1. If color is EMPTY and the earlier content of 
+     * (x,y) is also EMPTY, nothing happens. If position (x,y) lies outside the board, nothing happens.
+     * @param x: x coordinate of position
+     * @param y: y coordinate of position
+     * @param color: color to which the position(x,y) is being set
+     **/
+    protected void setElement(int x, int y, int color)
+
+/**
+     * copy() clones the current game board into a new object and returns the new Object
+     * This method comes handy in Strategy class which could manipulate the copy of Board and predict the best move
+     * which player can choose.
+     * @return the new Board object whose content is similar to the current Board 
+     **/
+    protected Board copy()
+
+/**
+    * listOfValidMoves(int color) gives list of all valid moves the player having the 
+    * given color makes.
+    * @param color: color of the player whose list of valid moves we want to calculate
+    * @return list of Move objects which player with given color can make
+    **/
+    protected Move[] listOfValidMoves(int color)
+
+/**
+    * isValidMove(Move m, int color) determines whether the Move m by the player having the given color is
+    * valid.
+    * @param m: Move object played by the player having the given color
+    * @param color: color of the player playing the move
+    * @return true if Move m by the player with given color is valid. Else, it returns false.
+    **/
+    protected boolean isValidMove(Move m, int color)
+
+/**
+    * performMove(int color, Move m) performs the Move m by player of given color and returns true
+    * if move was performed. Else it returns false.
+    * @param color: color of the player performing the move
+    * @param m: Move object being performed by the player
+    * @return true if move m by the player of given color was successfully performed. Else, it returns false
+    **/
+    public boolean performMove(int color, Move m)
+
+  /**
+    * toString() returns the string representing the current state of the Board. It helps
+    * in visualization of the Board. It can also be used to print Board during debugging.
+    * @return string representing the current state of the Board.
+    **/ 
+    public String toString()
+
+2) DLIST MODULE
+
+- implemented as part of HW5
+- includes DList, DListNode and InvalidNodeException classes
+- Had to modify it slightly to make it work for this project e.g. doesn’t return 
+InvalidNodeException for sentinel, returns null instead.
+	
+__DList__
+	
+public DList()	
+/** 
+*  DList() constructs for an empty DList.  
+**/
+
+public boolean isEmpty()
+/**
+   *  isEmpty() returns true if this List is empty, false otherwise.
+   *  @return true if this List is empty, false otherwise. 
+   **/
+
+public int length()
+/** 
+   *  length() returns the length of this List. 
+   *  @return the length of this List.
+   **/
+
+
+ public void insertFront(Object item)
+/**
+   *  insertFront() inserts an item at the front of this DList.
+   *  @param item is the item to be inserted.
+   **/
+ 
+public void insertBack(Object item)
+/**
+   *  insertBack() inserts an item at the back of this DList.
+   *  @param item is the item to be inserted.
+   **/
+  
+public ListNode front()
+/**
+   *  front() returns the node at the front of this DList.  If the DList is
+   *  empty, return an "invalid" node--a node with the property that any
+   *  attempt to use it will cause an exception.  (The sentinel is "invalid".)
+   *  @return a ListNode at the front of this DList.
+   */
+
+public ListNode back()
+/**
+   *  back() returns the node at the back of this DList.  If the DList is
+   *  empty, return an "invalid" node--a node with the property that any
+   *  attempt to use it will cause an exception.  (The sentinel is "invalid".)
+   *  @return a ListNode at the back of this DList.
+   */
+
+public String toString()
+/**
+   *  toString() returns a String representation of this DList.
+   *  @return a String representation of this DList.
+   */
+
+__DListNode__
+
+DListNode(Object i, DList l, DListNode p, DListNode n)
+/**
+   *  DListNode() constructor.
+   *  @param i the item to store in the node.
+   *  @param l the list this node is in.
+   *  @param p the node previous to this node.
+   *  @param n the node following this node.
+   */
+
+public boolean isValidNode()
+**
+   *  isValidNode returns true if this node is valid; false otherwise.
+   *  By default, an invalid node is one that doesn't belong to a list (myList
+   *  is null), but subclasses can override this definition.
+   *  @return true if this node is valid; false otherwise.
+   */
+
+public Object item() throws InvalidNodeException
+/**
+   *  item() returns this node's item.  If this node is invalid,
+   *  throws an exception.
+   *  @return the item stored in this node.
+   */
+
+public void setItem(Object item) throws InvalidNodeException
+/**
+   *  setItem() sets this node's item to "item".  If this node is invalid,
+   *  throws an exception.
+   */
+
+public ListNode next() throws InvalidNodeException
+/**
+   *  next() returns the node following this node.  If this node is invalid,
+   *  throws an exception.
+   *  @return the node following this node.
+   *  @exception InvalidNodeException if this node is not valid.
+   */
+
+public ListNode prev() throws InvalidNodeException
+/**
+   *  prev() returns the node preceding this node.  If this node is invalid,
+   *  throws an exception.
+   *  @param node the node whose predecessor is sought.
+   *  @return the node preceding this node.
+   *  @exception InvalidNodeException if this node is not valid.
+   */
+
+public void insertAfter(Object item) throws InvalidNodeException
+/**
+   *  insertAfter() inserts an item immediately following this node.  If this
+   *  node is invalid, throws an exception.
+   *  @param item the item to be inserted.
+   *  @exception InvalidNodeException if this node is not valid.
+   */
+
+public void insertBefore(Object item) throws InvalidNodeException
+/**
+   *  insertBefore() inserts an item immediately preceding this node.  If this
+   *  node is invalid, throws an exception.
+   *  @param item the item to be inserted.
+   *  @exception InvalidNodeException if this node is not valid.
+   */
+
+public void remove() throws InvalidNodeException
+/**
+   *  remove() removes this node from its DList.  If this node is invalid,
+   *  throws an exception.
+   *  @exception InvalidNodeException if this node is not valid.
+   */
+
+__InvalidNodeException__
+protected InvalidNodeException()
+/**
+ *  Implements an Exception that signals an attempt to use an invalid ListNode.
+ */
+
+3) Network Module finds the number of connections formed with a given chip and determines whether a certain board contains networks for a given color.
+	- Implemented by Bharath Satheesh
+	- Includes MachinePlayer class
+
+// Creates a machine player with the given color.  Color is either 0 (black)
+// or 1 (white).
+  public MachinePlayer(int color)
+
+// Creates a machine player with the given color and search depth.  Color is
+  // either 0 (black) or 1 (white).
+  public MachinePlayer(int color, int searchDepth)
+
+// Returns a new move by "this" player.  Internally records the move (updates
+  // the internal game board) as a move by "this" player.
+  public Move chooseMove()
+
+// If the Move m is legal, records the move as a move by the opponent
+  // (updates the internal game board) and returns true.  If the move is
+  // illegal, returns false without modifying the internal state of "this"
+  // player.  This method allows your opponents to inform you of their moves.
+  public boolean opponentMove(Move m)
+
+/**
+  * If the Move m is legal, records the move as a move by "this" player
+  * (updates the internal game board) and returns true.  If the move is
+  * illegal, returns false without modifying the internal state of "this"
+  * player.  This method is used to help set up "Network problems" for your
+  * player to solve.
+  */
+  public boolean forceMove(Move m)
+
+ /**
+   * Returns a list of all the connections from x, y 
+   * @param int x - x coordinate on board
+   * @param int y - y coordinate on board
+   * @param Board board - the current gameboard
+   * @return a list of all the connections from x, y
+   */
+ public DList hasConnection(int x, int y, Board board)
+
+/**
+  * towardsGoal(int color, int[] coord) checks whether the coordinate coord is in goal of the
+  * player with the given color.
+  * @param color: color of the player
+  * @param coord: array representing the coordinate
+  * @return true if coordinate coord is in goal of the player with the given color. Else, it 
+  * returns false.
+  **/
+  protected static boolean towardsGoal(int color, int[] coord)
+
+/**
+   * hasNetwork() detects whether a valid network can be found.
+   *  starts at a certain goal area, if there is a chip of the color
+   *  in the goal, check if a network can be found from that point.
+   *  If not, return false directly
+   *  @param board, the current game board
+   *  @param color, WHITE or BLACK
+   *  @return true or false, ie whether a network is found or not
+   */
+  public boolean hasNetwork(Board board, int color)
+
+/**
+   * function to return the player's color
+   * @return player color
+   */    
+  protected int color() {
+  	return color;
+  }
+
+/**
+   * function to return the opponent's color
+   * @return opposing color
+   */
+  protected int opponentColor() {
+  	return opponentColor(color);
+  }
+
+/**
+   * function to return the opponent's color, given player's color
+   * @param color which is the color of player
+   * @return opponent color
+   */
+  protected static int opponentColor(int color)
+
+4) Strategy Module
+	- Implemented by Anurag Ajay, Shaurya Kalsi
+	includes Strategy class and MachinePlayer class.
+	- MiniMax search algorithm with alpha-beta pruning
+	
+	Strategy Constructor
+	 /** 
+   	* Strategy(MachinePlayer player) is the constructor for strategy
+    	* @param player: the MachinePlayer which uses the strategy
+    	* @return a newly constructed
+    	**/
+public Strategy(MachinePlayer player)
+
+MiniMax method (Strategy class)
+/** 
+*chooseMoveMinMax(Board board, int player, int searchDepth, int alpha, int beta)   *Overloaded minmax algorithm  with alpha-beta pruning makes use of Game-Search *trees to find the best move player can select
+* @param board: board on which game is being played
+* @param player: color of the player performing the current move
+* @param searchDepth: the maximum search depth till which the method seraches the *game tree
+* @param alpha: best already explored option along path to root for maximizer
+* @param beta: best already explored option along path to root for minimizer
+* @throws InvalidNodeException whenever InvalidNodeException is thrown by the helper	functions
+* @return the best move the player performing the move can choose
+**/
+public Best chooseMoveMinMax(Board board, int player, int searchDepth, int alpha, int          beta) throws InvalidNodeException
+
+Evaluation function  (MachinePlayer class)
+/**
+   * The evaluateBoard method
+   * this method's main purpose is to tell the player what the best move
+   * to make is once search depth has been reached and minimax+alpha-beta has
+   * been applied, based on the score that it provides.
+   * Conditions that this method checks:
+   *  1)If opponent has a network, then score is automatically -100.
+   *  2)Makes sure that you dont crowd around either of your goals, since
+   *	the opponent chips cannot even be placed in those.
+   *  3)Works on giving almost double the score based on the number of
+   *	connections that a particular chip could add.
+   * Also uses a helper method that checks if the movement is in the right
+   *  direction.
+   * @param board takes in the final board of the leaf to give score
+   * @return a score for current state of Board which of type double
+   * @throws InvalidNodeException if any of the methods throw InvalidNodeException
+  */
+  public double evaluateBoard(Board board) throws InvalidNodeException
